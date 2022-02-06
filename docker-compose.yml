@@ -1,0 +1,67 @@
+version: "2"
+services:
+
+  nginx:
+    image: nginx
+    ports:
+      - "8080:8080"
+    links:
+      - "php:php"
+      - "mailhog:mailhog"
+    networks:
+      wp:
+    volumes:
+      - ./vendor/wpwildfire/docker-bedrock-local/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - .:/var/www
+
+  php:
+    build:
+      context: ./vendor/wpwildfire/docker-bedrock-local/docker/php
+      dockerfile: Dockerfile
+      args:
+        - PHP_VERSION
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./vendor/wpwildfire/docker-bedrock-local/docker/php/php.ini:/usr/local/etc/php/conf.d/wordpress.ini:ro
+      - .:/var/www
+    environment:
+      TERM: xterm
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_HOST: mysql
+      WP_HOME: http://localhost:8080
+    links:
+      - "mysql:mysql"
+      - "mailhog:mailhog"
+    networks:
+      wp:
+
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: database_name
+      MYSQL_USER: database_user
+      MYSQL_PASSWORD: database_password
+      TERM: xterm
+    volumes:
+      - wp:/var/lib/mysql
+    networks:
+      wp:
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      wp:
+
+volumes:
+  wp:
+
+networks:
+  wp:

@@ -1,0 +1,18 @@
+{
+  "name": "wpwildfire/docker-bedrock-local",
+  "type": "library",
+  "description": "Adds a local docker environment to a Bedrock project",
+  "homepage": "https://github.com/WPWildfire/docker-bedrock-local",
+  "license" : "MIT",
+  "minimum-stability": "dev",
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  },
+  "scripts": {
+    "post-root-package-install": [
+      "ln -f ./vendor/wpwildfire/docker-bedrock-local/docker-compose.yml ./docker-compose.yml"
+    ]
+  }
+}
